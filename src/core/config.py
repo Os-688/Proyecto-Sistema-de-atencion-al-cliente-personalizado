@@ -37,6 +37,10 @@ def _get_env_int(name: str, default: int) -> int:
 class Config:
     """Configuracion central de la aplicacion"""
 
+    # Seleccion de proveedor LLM
+    LLM_PROVIDER: str = os.getenv("LLM_PROVIDER", "openai").strip().lower() or "openai"
+    SUPPORTED_LLM_PROVIDERS = ("openai", "mock")
+
     # API Keys
     OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "").strip()
 
