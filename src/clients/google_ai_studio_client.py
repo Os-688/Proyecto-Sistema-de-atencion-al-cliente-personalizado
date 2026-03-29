@@ -1,0 +1,158 @@
+"""
+Cliente Google AI Studio - Implementa ILLMClient
+Utiliza el SDK de Google Generative AI (google-genai) para acceso a modelos Gemini
+"""
+
+import random
+import time
+from typing import List, Dict, Optional
+from google import genai
+from src.core.interfaces import ILLMClient
+from src.core.config import Config
+
+
+class GoogleAIStudioClient(ILLMClient):
+    """
+    Cliente para interactuar con Google AI Studio (Gemini)
+    Implementa ILLMClient para cumplir con DIP (Dependency Inversion Principle)
+    """
+    
+    def __init__(self, api_key: Optional[str] = None, model: Optional[str] = None):
+        """
+        Inicializa el cliente de Google AI Studio
+        
+        Args:
+            api_key: API key de Google AI Studio (usa Config.GOOGLE_API_KEY si no se proporciona)
+            model: Modelo a usar (usa Config.GOOGLE_MODEL si no se proporciona)
+        """
+        self.api_key = (api_key if api_key is not None else Config.GOOGLE_API_KEY).strip()
+        self.model = model or Config.GOOGLE_MODEL
+        
+        if not self.api_key:
+            raise ValueError(
+                "Google AI Studio API key no configurada. "
+                "Configura GOOGLE_API_KEY como variable de entorno o pásala al constructor."
+            )
+        
+        # Inicializar cliente con API key
+        self.client = genai.Client(api_key=self.api_key)
+
+    def _query_with_retry(
+        self,
+        prompt: str,
+        system_prompt: Optional[str],
+        temperature: float,
+        max_tokens: int
+    ) -> str:
+        """Ejecuta una consulta con reintentos para errores transitorios."""
+        max_attempts = 3
+        base_delay_seconds = 0.5
+
+        for attempt in range(max_attempts):
+            try:
+                # Construir contenido con system prompt si existe
+                if system_prompt:
+                    full_prompt = f"{system_prompt}\n\n{prompt}"
+                else:
+                    full_prompt = prompt
+                
+                response = self.client.models.generate_content(
+                    model=self.model,
+                    contents=full_prompt,
+                    config=genai.types.GenerateContentConfig(
+                        temperature=temperature,
+                        max_output_tokens=max_tokens
+                    )
+                )
+                
+                # Extraer texto de respuesta
+                if response.text:
+                    return response.text.strip()
+                else:
+                    return ""
+
+            except (Exception) as e:
+                error_str = str(e)
+                is_transient = any(x in error_str for x in ["429", "500", "503", "timeout"])
+                is_last_attempt = attempt == max_attempts - 1
+                
+                if not is_transient or is_last_attempt:
+                    raise e
+
+                delay = base_delay_seconds * (2 ** attempt) + random.uniform(0, 0.25)
+                print(
+                    f"⚠️  Error transitorio de Google AI Studio ({type(e).__name__}). "
+                    f"Reintentando en {delay:.2f}s..."
+                )
+                time.sleep(delay)
+
+        raise RuntimeError("No se pudo obtener respuesta de Google AI Studio tras varios intentos")
+    
+    def query(self, prompt: str, system_prompt: Optional[str] = None, 
+              temperature: float = 0.7, max_tokens: int = 500) -> str:
+        """
+        Realiza una consulta al modelo de lenguaje Google Gemini
+        
+        Args:
+            prompt: Texto de entrada del usuario
+            system_prompt: Instrucciones del sistema
+            temperature: Creatividad de la respuesta (0-1)
+            max_tokens: Longitud máxima de la respuesta
+            
+        Returns:
+            Respuesta generada por el modelo
+        """
+        try:
+            return self._query_with_retry(
+                prompt=prompt,
+                system_prompt=system_prompt,
+                temperature=temperature,
+                max_tokens=max_tokens
+            )
+        except Exception as e:
+            print(f"❌ Error al consultar Google AI Studio: {e}")
+            return f"Lo siento, hubo un error al procesar tu solicitud. Por favor, intenta de nuevo."
+    
+    def classify_intent(self, user_input: str, possible_intents: List[str]) -> Dict[str, float]:
+        """
+        Clasifica la intención del usuario usando Google Gemini
+        
+        Args:
+            user_input: Texto del usuario
+            possible_intents: Lista de intenciones posibles
+            
+        Returns:
+            Diccionario con intenciones y sus probabilidades
+        """
+        intents_str = "\n".join([f"- {intent}" for intent in possible_intents])
+        
+        prompt = f"""Mensaje del usuario: "{user_input}"
+
+Intenciones posibles:
+{intents_str}
+
+Clasifica el mensaje en UNA de estas intenciones. Responde SOLO con el nombre de la intención."""
+        
+        try:
+            intent = self.query(
+                prompt=prompt,
+                system_prompt=Config.SYSTEM_PROMPTS["intent_detection"],
+                temperature=0.3,  # Baja temperatura para clasificación consistente
+                max_tokens=50
+            ).lower().strip()
+            
+            # Encuentra la intención más similar de las disponibles
+            if intent in possible_intents:
+                return {intent: 1.0}
+            
+            # Si no hay coincidencia exacta, busca la más cercana
+            for possible_intent in possible_intents:
+                if possible_intent in intent or intent in possible_intent:
+                    return {possible_intent: 0.8}
+            
+            # Default a "general" si no hay match
+            return {"general": 0.5}
+        
+        except Exception as e:
+            print(f"❌ Error al clasificar intención: {e}")
+            return {"general": 0.5}

@@ -6,6 +6,7 @@ Centraliza la creacion de clientes para evitar acoplar la UI a implementaciones 
 from typing import Callable, Dict, List, Optional
 
 from src.clients.openai_client import MockLLMClient, OpenAIClient
+from src.clients.google_ai_studio_client import GoogleAIStudioClient
 from src.core.config import Config
 from src.core.interfaces import ILLMClient
 
@@ -15,6 +16,7 @@ class LLMProviderFactory:
 
     _providers: Dict[str, Callable[[], ILLMClient]] = {
         "openai": OpenAIClient,
+        "google_ai_studio": GoogleAIStudioClient,
         "mock": MockLLMClient,
     }
 
@@ -34,8 +36,7 @@ class LLMProviderFactory:
 
         Precedencia:
         1. `provider` recibido como parametro.
-        2. `Config.LLM_PROVIDER`.
-        3. fallback a "mock" cuando no hay proveedor soportado o no hay API key para OpenAI.
+        2. `Config.LLM_PROVIDER`./Google.
         """
         selected_provider = (provider or Config.LLM_PROVIDER).strip().lower() or "openai"
 
@@ -49,6 +50,10 @@ class LLMProviderFactory:
         # Si el proveedor seleccionado requiere API key y no existe, degradar a mock.
         if selected_provider == "openai" and not Config.OPENAI_API_KEY:
             print("⚠️  OPENAI_API_KEY no configurada. Usando proveedor mock.")
+            return cls._providers["mock"]()
+
+        if selected_provider == "google_ai_studio" and not Config.GOOGLE_API_KEY:
+            print("⚠️  GOOGLE_API_KEY no configurada. Usando proveedor mock.")
             return cls._providers["mock"]()
 
         try:

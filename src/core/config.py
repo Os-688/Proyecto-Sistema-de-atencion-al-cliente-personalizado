@@ -39,15 +39,21 @@ class Config:
 
     # Seleccion de proveedor LLM
     LLM_PROVIDER: str = os.getenv("LLM_PROVIDER", "openai").strip().lower() or "openai"
-    SUPPORTED_LLM_PROVIDERS = ("openai", "mock")
+    SUPPORTED_LLM_PROVIDERS = ("openai", "google_ai_studio", "mock")
 
     # API Keys
     OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "").strip()
+    GOOGLE_API_KEY: str = os.getenv("GOOGLE_API_KEY", "").strip()
 
     # Modelo OpenAI
     OPENAI_MODEL: str = os.getenv("OPENAI_MODEL", "gpt-3.5-turbo").strip() or "gpt-3.5-turbo"
     OPENAI_TEMPERATURE: float = _get_env_float("OPENAI_TEMPERATURE", 0.7)
     OPENAI_MAX_TOKENS: int = _get_env_int("OPENAI_MAX_TOKENS", 500)
+
+    # Modelo Google AI Studio (Gemini)
+    GOOGLE_MODEL: str = os.getenv("GOOGLE_MODEL", "gemini-2.5-flash").strip() or "gemini-2.5-flash"
+    GOOGLE_TEMPERATURE: float = _get_env_float("GOOGLE_TEMPERATURE", 0.7)
+    GOOGLE_MAX_TOKENS: int = _get_env_int("GOOGLE_MAX_TOKENS", 500)
 
     # Rutas de datos
     DATA_DIR: str = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "data")

@@ -9,6 +9,7 @@ from typing import Optional
 from src.application.chat_service import ChatService
 from src.core.interfaces import IDatabase, ILLMClient
 from src.clients.openai_client import MockLLMClient, OpenAIClient
+from src.clients.google_ai_studio_client import GoogleAIStudioClient
 from src.factories.llm_provider_factory import LLMProviderFactory
 from src.factories.strategy_factory import StrategyFactory
 from src.infrastructure.database_sim import DatabaseSimulator
@@ -49,6 +50,8 @@ class AppFactory:
         """Normaliza el nombre del proveedor para UI y logging operacional."""
         if isinstance(llm_client, OpenAIClient):
             return "openai"
+        if isinstance(llm_client, GoogleAIStudioClient):
+            return "google_ai_studio"
         if isinstance(llm_client, MockLLMClient):
             return "mock"
 
