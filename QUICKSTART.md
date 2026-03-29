@@ -141,11 +141,42 @@ pytest tests/ --cov=src --cov-report=html
 pytest tests/test_chat_service.py -v
 ```
 
-**Resultado esperado**: 72/72 tests pasando ✅
+Resultado esperado: suite ejecutada sin modificar los archivos reales de `data/`.
 
 **Aislamiento en pruebas**:
 - Los tests usan una copia temporal de `data/` (definida en `tests/conftest.py`).
 - Ejecutar tests no debe modificar `data/tickets.json` ni otros JSON reales.
+
+### Testing Operativo con Scripts
+
+Además de `pytest`, el proyecto incluye scripts operativos para validaciones guiadas:
+
+```bash
+python scripts/run_8_tests.py
+python scripts/revalidation_after_fixes.py
+python scripts/test_smoke.py
+```
+
+Documentación completa de propósito, entradas y salidas:
+
+- [scripts/README.md](scripts/README.md)
+
+Los resultados y artefactos se guardan en:
+
+- `run_8_tests.py` -> `informes/revalidacion/` (JSON con timestamp)
+- `revalidation_after_fixes.py` -> `informes/revalidacion/` (JSON con timestamp)
+- `test_smoke.py` -> salida en consola (no guarda archivo por defecto)
+
+Importante:
+
+- `pytest` usa aislamiento de datos de prueba.
+- `scripts/` puede mutar datos reales en `data/` durante pruebas funcionales.
+
+Guia recomendada por tipo de uso:
+
+- Si necesitas pruebas automatizadas de desarrollo: usa `pytest`.
+- Si necesitas validacion funcional manual y evidencia: usa `scripts/`.
+- Si necesitas trazabilidad historica: revisa `informes/`.
 
 ---
 
@@ -191,7 +222,9 @@ Proyecto-Sistema-de-atencion-al-cliente-personalizado/
 │   ├── application/        # Servicio de chat
 │   └── ui/                 # CLI y Streamlit
 ├── data/                   # Datos JSON simulados
-├── tests/                  # Tests unitarios (72 tests)
+├── scripts/                # Scripts de testing operativo y diagnóstico
+├── tests/                  # Tests unitarios (pytest)
+├── informes/               # Evidencia, análisis, revalidaciones y resúmenes
 ├── main.py                 # Entry point CLI
 ├── app.py                  # Entry point Streamlit
 └── requirements.txt        # Dependencias
@@ -251,7 +284,7 @@ self._strategies["refund"] = RefundStrategy(llm_client, database)
 
 El sistema incluye datos de ejemplo:
 
-- **4 Clientes**: Con diferentes membresías (Premium, Standard, Basic)
+- **5 Clientes**: Con diferentes membresías (Premium, Standard, Basic)
 - **6 Productos**: Electrónica, accesorios, audio
 - **5 Tickets**: Histórico de soporte
 - **8 FAQ**: Preguntas frecuentes comunes
@@ -296,7 +329,7 @@ pip show streamlit
 
 ## 📊 Métricas de Calidad
 
-- ✅ **72 tests unitarios** (100% pasando)
+- ✅ Tests unitarios ejecutables con `pytest tests/ -v`
 - ✅ **5 estrategias** implementadas
 - ✅ **2 interfaces** (CLI + Web)
 - ✅ **Principios SOLID** aplicados
@@ -325,8 +358,17 @@ pip show streamlit
 ## 📝 Recursos Adicionales
 
 - [README.md](README.md) - Documentación completa
+- [scripts/README.md](scripts/README.md) - Guía de scripts operativos
+- [informes/GUIA_CREACION_INFORMES.md](informes/GUIA_CREACION_INFORMES.md) - Convención de informes
 - [SOLID_ANALYSIS.md](SOLID_ANALYSIS.md) - Análisis de principios SOLID
 - [tests/](tests/) - Ejemplos de testing con mocks
+
+Lectura sugerida para onboarding:
+
+1. [README.md](README.md)
+2. [QUICKSTART.md](QUICKSTART.md)
+3. [scripts/README.md](scripts/README.md)
+4. [informes/GUIA_CREACION_INFORMES.md](informes/GUIA_CREACION_INFORMES.md)
 
 ---
 

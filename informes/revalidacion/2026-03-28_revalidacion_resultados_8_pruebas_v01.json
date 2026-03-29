@@ -1,0 +1,94 @@
+[
+  {
+    "test": 1,
+    "name": "Humo E2E",
+    "status": "PASS",
+    "intent": "general",
+    "confidence": 0.8,
+    "elapsed": 2.167135238647461,
+    "message_len": 240,
+    "timestamp": "2026-03-28T20:09:02.724741"
+  },
+  {
+    "test": 2,
+    "name": "Support Intent",
+    "status": "PASS",
+    "intent": "general",
+    "confidence": 0.8,
+    "has_customer_context": true,
+    "elapsed": 4.532682657241821,
+    "metadata": {
+      "conversation_type": "general"
+    },
+    "timestamp": "2026-03-28T20:09:07.758112"
+  },
+  {
+    "test": 3,
+    "name": "Recommendation Intent",
+    "status": "PASS",
+    "intent": "general",
+    "confidence": 0.8,
+    "has_products": false,
+    "elapsed": 4.372566223144531,
+    "metadata": {
+      "conversation_type": "general"
+    },
+    "timestamp": "2026-03-28T20:09:12.631790"
+  },
+  {
+    "test": 4,
+    "name": "FAQ Fallback",
+    "status": "PASS",
+    "intent": "general",
+    "confidence": 0.8,
+    "elapsed": 6.014411926269531,
+    "metadata": {
+      "conversation_type": "general"
+    },
+    "timestamp": "2026-03-28T20:09:19.146751"
+  },
+  {
+    "test": 5,
+    "name": "Entrada Ambigua",
+    "status": "PARTIAL",
+    "intent": "support",
+    "confidence": 0.9,
+    "fallback_correct": false,
+    "elapsed": 3.317232131958008,
+    "timestamp": "2026-03-28T20:09:22.964652"
+  },
+  {
+    "test": 6,
+    "name": "Respuesta Malformada",
+    "status": "PASS",
+    "intent": "support",
+    "confidence": 0.9,
+    "has_valid_structure": true,
+    "elapsed": 3.562530994415283,
+    "timestamp": "2026-03-28T20:09:27.027698"
+  },
+  {
+    "test": 7,
+    "name": "Resiliencia",
+    "status": "PASS",
+    "intent": "general",
+    "confidence": 0.8,
+    "response_valid": true,
+    "elapsed": 4.271967887878418,
+    "timestamp": "2026-03-28T20:09:31.800354"
+  },
+  {
+    "test": 8,
+    "name": "Edge Case Long Input",
+    "status": "PASS",
+    "intent": "general",
+    "confidence": 0.8,
+    "input_length": 357,
+    "response_length": 79,
+    "elapsed": 4.330617427825928,
+    "metadata": {
+      "conversation_type": "general"
+    },
+    "timestamp": "2026-03-28T20:09:36.631181"
+  }
+]

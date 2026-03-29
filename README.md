@@ -61,7 +61,7 @@ src/
 - Estrategias delegan reglas de ticket, severidad y fallback
 - Métricas operativas en `ChatService`: latencia, fallback y accuracy de intención
 - Tests ejecutados con aislamiento de datos para no mutar archivos en `data/`
-- Suite de pruebas actual: **83 tests pasando**
+- Suite de pruebas: ejecutable con `pytest tests/ -v`
 
 ## 🚀 Instalación
 
@@ -279,11 +279,37 @@ pytest tests/ --cov=src --cov-report=html
 
 > **Cobertura de métricas**: `tests/test_chat_service.py` valida la presencia y cálculo base de `avg_response_time_ms`, `p95_response_time_ms`, `fallback_rate_pct` e `intent_accuracy_pct`.
 
+### Scripts de Pruebas Operativas
+
+Para flujos de validacion manual, smoke avanzado y revalidaciones, revisa:
+
+- [scripts/README.md](scripts/README.md)
+
+Ese documento explica cuando ejecutar cada script y donde se guardan los artefactos.
+
+> **Advertencia importante**: A diferencia de `pytest` (aislado por `tests/conftest.py`),
+> los scripts en `scripts/` pueden mutar datos reales de `data/` durante pruebas
+> funcionales (por ejemplo, crear tickets). Para ejecuciones repetibles, usar copia
+> de `data/` o entorno dedicado.
+
+### Reportes y Evidencia
+
+Los resultados de ejecuciones y revalidaciones se almacenan en [informes](informes):
+
+- [informes/analisis](informes/analisis)
+- [informes/ejecuciones](informes/ejecuciones)
+- [informes/revalidacion](informes/revalidacion)
+- [informes/resumenes](informes/resumenes)
+
+Convenciones y plantilla de reportes:
+
+- [informes/GUIA_CREACION_INFORMES.md](informes/GUIA_CREACION_INFORMES.md)
+
 ## 📊 Base de Datos Simulada
 
 El sistema incluye datos JSON simulados en la carpeta `data/`:
 
-- **customers.json**: 4 clientes de ejemplo
+- **customers.json**: 5 clientes de ejemplo
 - **products.json**: 6 productos en diferentes categorías
 - **tickets.json**: 5 tickets de soporte históricos
 - **faq.json**: 8 preguntas frecuentes
@@ -295,8 +321,7 @@ El sistema incluye datos JSON simulados en la carpeta `data/`:
 Usuario: "Tengo un error al procesar mi pago"
 Sistema: [Detecta intención "support"]
          [Genera solución paso a paso]
-         [Crea ticket de seguimiento], requiere pago)
-- ✅ `google_ai_studio` (modelos Gemini con tokens gratuitos
+         [Crea ticket de seguimiento]
 ```
 
 ### 2. Recomendaciones de Productos
@@ -381,6 +406,12 @@ class AnthropicClient(ILLMClient):
 3. Commit tus cambios (`git commit -m 'Agregar nueva funcionalidad'`)
 4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
 5. Abre un Pull Request
+
+## 📚 Documentación Técnica
+
+- [scripts/README.md](scripts/README.md) - Guia de scripts operativos de pruebas
+- [informes/GUIA_CREACION_INFORMES.md](informes/GUIA_CREACION_INFORMES.md) - Convencion para creacion de informes
+- [SOLID_ANALYSIS.md](SOLID_ANALYSIS.md) - Analisis de arquitectura y principios SOLID
 
 ## 📄 Licencia
 
