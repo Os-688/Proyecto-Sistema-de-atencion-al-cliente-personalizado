@@ -122,9 +122,10 @@ LLM_PROVIDER=openai
 `LLM_PROVIDER` define qué cliente se inicializa en runtime:
 
 - `openai`: usa `OpenAIClient` (requiere `OPENAI_API_KEY`)
+- `google_ai_studio`: usa `GoogleAIStudioClient` con modelos Gemini (requiere `GOOGLE_API_KEY`)
 - `mock`: usa `MockLLMClient` (sin llamadas externas)
 
-Si seleccionas `openai` sin API key, el sistema degrada automáticamente a `mock`.
+Si seleccionas `openai` o `google_ai_studio` sin API key correspondiente, el sistema degrada automáticamente a `mock`.
 
 **Windows (PowerShell):**
 ```powershell
@@ -141,7 +142,62 @@ set OPENAI_API_KEY=tu-api-key-aquí
 export OPENAI_API_KEY="tu-api-key-aquí"
 ```
 
-> **Nota**: Si no configuras la API key, el sistema funcionará en **modo simulación** con respuestas predefinidas basadas en keywords.
+### Opción 2: Usar Google AI Studio (RECOMENDADO PARA PROBAR GRATIS)
+
+Si prefieres **probar la aplicación sin costo**, Google AI Studio ofrece tokens gratuitos ilimitados para modelos Gemini.
+
+#### Paso 1: Crear Cuenta en Google AI Studio
+
+1. Abre https://aistudio.google.com en tu navegador
+2. Inicia sesión con tu cuenta Google (si no tienes, crea una)
+3. Acepta los términos de uso de Gemini API
+4. Se te mostrará automáticamente el dashboard de AI Studio
+
+#### Paso 2: Obtener API Key de Google
+
+1. Haz clic en **"Get API key"** en la interfaz de AI Studio
+2. Selecciona **"Create API key in new Google Cloud project"** (o usa un proyecto existente)
+3. Se generará automáticamente una nueva API key
+4. Copia la key y guárdala de forma segura
+
+#### Paso 3: Configurar en Tu Entorno
+
+En archivo `.env` o variables de entorno del sistema:
+
+```env
+LLM_PROVIDER=google_ai_studio
+GOOGLE_API_KEY=tu-api-key-de-google-aqui
+GOOGLE_MODEL=gemini-2.5-flash
+```
+
+**Windows (PowerShell):**
+```powershell
+$env:LLM_PROVIDER = "google_ai_studio"
+$env:GOOGLE_API_KEY = "tu-api-key-aquí"
+```
+
+**Linux/Mac:**
+```bash
+export LLM_PROVIDER="google_ai_studio"
+export GOOGLE_API_KEY="tu-api-key-aquí"
+```
+
+#### Free Tier de Google AI Studio
+
+- ✅ **Tokens gratuitos ilimitados** para probar (dentro de límites de cuota mensuales)
+- ✅ **Modelos disponibles**: Gemini 2.5 Flash, Gemini 1.5 Pro, Gemini 1.5 Flash
+- ⚠️ **Límites recomendados**: 
+  - ~1,500 requests por minuto en free tier
+  - ~15,000 tokens de entrada por minuto
+  - Si alcanzas límites, el sistema fallará gracefully y reportará error
+- 💡 **Recomendación**: Usa `gemini-2.5-flash` (más rápido y económico) para desarrollo
+
+Si excedes cuotas durante desarrollo, puedes:
+- Cambiar temporalmente a `LLM_PROVIDER=mock` sin modificar otros archivos
+- Esperar a que se resetee la cuota (normalmente cada 24 horas)
+- Actualizar a un plan de pago en Google Cloud Console
+
+> **Nota**: Si no configuras API key, el sistema funcionará en **modo simulación** con respuestas predefinidas basadas en keywords.
 
 ## 💻 Uso
 
@@ -239,7 +295,8 @@ El sistema incluye datos JSON simulados en la carpeta `data/`:
 Usuario: "Tengo un error al procesar mi pago"
 Sistema: [Detecta intención "support"]
          [Genera solución paso a paso]
-         [Crea ticket de seguimiento]
+         [Crea ticket de seguimiento], requiere pago)
+- ✅ `google_ai_studio` (modelos Gemini con tokens gratuitos
 ```
 
 ### 2. Recomendaciones de Productos

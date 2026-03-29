@@ -27,25 +27,49 @@ pip install -r requirements-dev.txt
 
 ### 2. Configurar API Key (Opcional)
 
-También puedes crear un archivo `.env` en la raíz del proyecto:
+**Opción A: Usar Google AI Studio (RECOMENDADO - Tokens Gratuitos)**
+
+Si quieres probar la app **sin costo inicial**, usa Google AI Studio:
+
+1. Ve a https://aistudio.google.com
+2. Inicia sesión con tu cuenta Google
+3. Haz clic en "Get API key"
+4. Copia tu API key
+
+Luego crea un archivo `.env` en la raíz del proyecto:
+
+```env
+LLM_PROVIDER=google_ai_studio
+GOOGLE_API_KEY=tu-api-key-aqui
+```
+
+O configura variables de entorno:
+
+```bash
+# Linux/Mac:
+export LLM_PROVIDER="google_ai_studio"
+export GOOGLE_API_KEY="tu-api-key-aqui"
+
+# Windows PowerShell:
+$env:LLM_PROVIDER = "google_ai_studio"
+$env:GOOGLE_API_KEY = "tu-api-key-aqui"
+```
+
+**Opción B: Usar OpenAI (requiere pago)**
+
+También puedes crear un archivo `.env`:
 
 ```env
 OPENAI_API_KEY=sk-tu-api-key-aqui
+LLM_PROVIDER=openai
 ```
 
-**Opción A: Con OpenAI (recomendado para producción)**
-```bash
-# Windows PowerShell:
-$env:OPENAI_API_KEY = "sk-tu-api-key-aqui"
+**Opción C: Sin API Key (modo demo)**
 
-# Linux/Mac:
-export OPENAI_API_KEY="sk-tu-api-key-aqui"
-```
-
-**Opción B: Sin API Key (modo demo)**
 - El sistema funciona en modo simulación
 - Respuestas basadas en keywords
 - Ideal para desarrollo y testing
+- Sin costo, sin API key necesaria
 
 ### 3. Ejecutar
 
