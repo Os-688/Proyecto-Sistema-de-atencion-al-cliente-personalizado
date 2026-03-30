@@ -10,13 +10,13 @@ git clone <url-del-repo>
 cd Proyecto-Sistema-de-atencion-al-cliente-personalizado
 
 # Crear entorno virtual
-python -m venv venv
+python -m venv .venv
 
 # Activar entorno
 # Windows PowerShell:
-.\venv\Scripts\Activate.ps1
+.\.venv\Scripts\Activate.ps1
 # Linux/Mac:
-source venv/bin/activate
+source .venv/bin/activate
 
 # Instalar dependencias
 pip install -r requirements.txt

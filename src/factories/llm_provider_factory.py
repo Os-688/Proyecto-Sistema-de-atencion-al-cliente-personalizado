@@ -36,7 +36,7 @@ class LLMProviderFactory:
 
         Precedencia:
         1. `provider` recibido como parametro.
-        2. `Config.LLM_PROVIDER`./Google.
+        2. `Config.LLM_PROVIDER` definido en configuracion.
         """
         selected_provider = (provider or Config.LLM_PROVIDER).strip().lower() or "openai"
 

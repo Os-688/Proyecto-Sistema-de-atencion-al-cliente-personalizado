@@ -10,6 +10,18 @@ Esta carpeta contiene scripts de validacion manual complementaria a `pytest`.
 4. Si usas `openai` o `google_ai_studio`, configurar API key correspondiente.
 5. Si no hay API key, usar `LLM_PROVIDER=mock` para pruebas locales sin llamadas externas.
 
+Activacion recomendada del entorno local estandar (`.venv`):
+
+```powershell
+# Windows PowerShell
+.\.venv\Scripts\Activate.ps1
+```
+
+```bash
+# Linux/Mac
+source .venv/bin/activate
+```
+
 ## Objetivo
 
 - Ejecutar escenarios de pruebas funcionales guiadas.

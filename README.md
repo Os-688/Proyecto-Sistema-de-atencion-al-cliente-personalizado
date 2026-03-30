@@ -82,20 +82,20 @@ cd Proyecto-Sistema-de-atencion-al-cliente-personalizado
 
 **Windows (PowerShell):**
 ```powershell
-python -m venv venv
-.\venv\Scripts\Activate.ps1
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
 ```
 
 **Windows (CMD):**
 ```cmd
-python -m venv venv
-venv\Scripts\activate.bat
+python -m venv .venv
+.venv\Scripts\activate.bat
 ```
 
 **Linux/Mac:**
 ```bash
-python3 -m venv venv
-source venv/bin/activate
+python3 -m venv .venv
+source .venv/bin/activate
 ```
 
 ### Paso 3: Instalar Dependencias

@@ -125,11 +125,12 @@ celerybeat.pid
 .env
 .venv
 env/
-venv/
 ENV/
 env.bak/
-venv.bak/
 pyvenv.cfg
+
+# Local editor configuration
+.vscode/settings.json
 
 # Spyder project settings
 .spyderproject

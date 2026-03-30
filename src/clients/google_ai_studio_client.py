@@ -126,6 +126,9 @@ class GoogleAIStudioClient(ILLMClient):
             Diccionario con intenciones y sus probabilidades
         """
         from difflib import get_close_matches
+        fallback_intent = "general" if "general" in possible_intents else (
+            possible_intents[0] if possible_intents else "general"
+        )
         
         # Palabras clave por intención para mejor clasificación
         intent_keywords = {
@@ -177,9 +180,9 @@ Clasifica el mensaje en UNA de estas intenciones. Responde SOLO con el nombre de
                 confidence = min(0.9, 0.6 + (max_matches * 0.15))  # +0.15 por cada keyword
                 return {best_intent: confidence}
             
-            # 4. Fallback a "general" si no hay match
-            return {"general": 0.5}
+            # 4. Fallback seguro: devolver solo intenciones permitidas
+            return {fallback_intent: 0.5}
         
         except Exception as e:
             print(f"❌ Error al clasificar intención: {e}")
-            return {"general": 0.5}
+            return {fallback_intent: 0.5}

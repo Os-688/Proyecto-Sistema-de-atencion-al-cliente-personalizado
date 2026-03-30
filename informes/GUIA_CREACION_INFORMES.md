@@ -28,6 +28,7 @@ Campos:
 3. Guardar logs en `ejecuciones`, no en raiz.
 4. Si un informe mezcla hallazgos y cierre, guardar en `resumenes`.
 5. Si se reejecuta una suite, guardar salida y JSON en `revalidacion`.
+6. En la seccion de validacion, documentar comando con entorno local `.venv` activo o con interprete explicito de `.venv` para evitar ambiguedad de entorno global.
 
 ## Politica de Retencion y Archivo
 

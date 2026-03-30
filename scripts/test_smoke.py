@@ -8,6 +8,7 @@ import os
 import json
 import time
 from datetime import datetime
+from typing import Any, Dict
 
 # Agregar el directorio raíz al path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -15,8 +16,9 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src.application.app_factory import AppFactory
 from src.core.config import Config
 
-def test_smoke_simple_greeting():
-    """Prueba E2E simple: saludar al sistema"""
+
+def run_smoke_simple_greeting() -> Dict[str, Any]:
+    """Ejecuta el smoke test y retorna un resultado estructurado."""
     print("\n" + "="*80)
     print("PRUEBA DE HUMO #1: Test E2E Simple con Google AI Studio")
     print("="*80)
@@ -46,7 +48,13 @@ def test_smoke_simple_greeting():
         print(f"✗ Error al crear componentes: {e}")
         import traceback
         traceback.print_exc()
-        return None
+        return {
+            "status": "FAILED",
+            "error": str(e),
+            "error_type": type(e).__name__,
+            "stage": "create_components",
+            "timestamp": datetime.now().isoformat()
+        }
     
     # Verificar datos cargados
     print("\n[DATOS CARGADOS]")
@@ -95,12 +103,12 @@ def test_smoke_simple_greeting():
         print(f"✓ Formato respuesta: Válido (intent, message, confidence, metadata)")
         print(f"✓ Contenido respuesta: {'Coherente' if len(response.message) > 10 else 'Muy breve (posible problema)'}")
         
-        # Retornar datos para microinforme
         return {
             "status": "SUCCESS",
             "elapsed_time": elapsed_time,
             "intent": response.intent,
             "confidence": response.confidence,
+            "message": response.message,
             "message_length": len(response.message),
             "metadata": response.metadata,
             "timestamp": datetime.now().isoformat()
@@ -114,12 +122,29 @@ def test_smoke_simple_greeting():
             "status": "FAILED",
             "error": str(e),
             "error_type": type(e).__name__,
+            "stage": "process_message",
             "elapsed_time": elapsed_time,
             "timestamp": datetime.now().isoformat()
         }
 
+
+def test_smoke_simple_greeting():
+    """Prueba E2E simple: saludar al sistema"""
+    result = run_smoke_simple_greeting()
+
+    assert result["status"] == "SUCCESS", (
+        f"Smoke test falló en etapa '{result.get('stage', 'desconocida')}': "
+        f"{result.get('error', 'sin detalle')}"
+    )
+    assert result.get("intent"), "El smoke test no devolvió intención"
+    assert result.get("message_length", 0) > 0, "El smoke test devolvió respuesta vacía"
+    confidence = result.get("confidence")
+    assert confidence is not None and 0.0 <= confidence <= 1.0, (
+        f"Confianza fuera de rango: {confidence}"
+    )
+
 if __name__ == "__main__":
-    result = test_smoke_simple_greeting()
+    result = run_smoke_simple_greeting()
     
     print("\n" + "="*80)
     print("RESULTADO FINAL")

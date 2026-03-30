@@ -110,13 +110,32 @@ Manten conversaciones naturales, ayuda con dudas generales, y dirige a los usuar
     @classmethod
     def validate(cls) -> bool:
         """Valida que la configuracion este completa."""
-        if not cls.OPENAI_API_KEY.strip():
-            print("ADVERTENCIA: OPENAI_API_KEY no esta configurada")
-            print("Para usar el chatbot con OpenAI, configura tu API key:")
-            print("export OPENAI_API_KEY='tu-api-key'  (Linux/Mac)")
-            print("$env:OPENAI_API_KEY='tu-api-key'  (Windows PowerShell)")
-            return False
-        return True
+        provider = (cls.LLM_PROVIDER or "openai").strip().lower() or "openai"
+
+        if provider == "mock":
+            return True
+
+        if provider == "openai":
+            if not cls.OPENAI_API_KEY.strip():
+                print("ADVERTENCIA: OPENAI_API_KEY no esta configurada")
+                print("Para usar el chatbot con OpenAI, configura tu API key:")
+                print("export OPENAI_API_KEY='tu-api-key'  (Linux/Mac)")
+                print("$env:OPENAI_API_KEY='tu-api-key'  (Windows PowerShell)")
+                return False
+            return True
+
+        if provider == "google_ai_studio":
+            if not cls.GOOGLE_API_KEY.strip():
+                print("ADVERTENCIA: GOOGLE_API_KEY no esta configurada")
+                print("Para usar el chatbot con Google AI Studio, configura tu API key:")
+                print("export GOOGLE_API_KEY='tu-api-key'  (Linux/Mac)")
+                print("$env:GOOGLE_API_KEY='tu-api-key'  (Windows PowerShell)")
+                return False
+            return True
+
+        print(f"ADVERTENCIA: LLM_PROVIDER '{provider}' no soportado")
+        print(f"Proveedores soportados: {', '.join(cls.SUPPORTED_LLM_PROVIDERS)}")
+        return False
 
     @classmethod
     def get_system_prompt(cls, intent: str) -> str:
